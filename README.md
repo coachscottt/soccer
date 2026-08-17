@@ -5,6 +5,8 @@ vs per-book prices; logs everything and grades it against closing lines
 and results. Paper-tracked until the CLV ledger proves categories real.
 All runs are manual. Shares the workspace `.venv`.
 
+**Away from the PC?** `SETUP_CHROMEBOOK.md` (one-time Linux setup) and `RUNBOOK_CHROMEBOOK.md` (day-to-day commands, no Linux experience needed).
+
 ## Daily-use scripts (run from this directory, venv python)
 
 | Script | Purpose |
