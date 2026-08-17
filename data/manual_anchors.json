@@ -1,0 +1,12 @@
+{
+  "_note": "Manual sharp anchors (Pinnacle site, owner-supplied). American odds converted to decimal. Scanner uses these as anchor when matched; source tagged pinnacle-manual. Serbia retired from flagging 2026-08-02 (no_flag).",
+  "_updated": "2026-08-03",
+  "czech": [
+    {"home": "Zlin", "away": "Bohemians 1905", "h2h": [2.54, 3.30, 2.73], "line": 2.25, "over": 1.79, "under": 2.01},
+    {"home": "Teplice", "away": "Viktoria Plzen", "h2h": [4.66, 3.76, 1.70], "line": 2.5, "over": 1.92, "under": 1.87},
+    {"home": "Mlada Boleslav", "away": "Sparta Prague", "h2h": [4.34, 4.07, 1.69], "line": 3.0, "over": 1.91, "under": 1.88},
+    {"home": "Slavia Prague", "away": "Pardubice", "h2h": [1.22, 6.22, 10.23], "line": 3.25, "over": 1.99, "under": 1.79},
+    {"home": "Hradec Kralove", "away": "Banik Ostrava", "h2h": [2.12, 3.25, 3.55], "line": 2.5, "over": 1.92, "under": 1.87},
+    {"home": "Jablonec", "away": "Slovacko", "h2h": [1.61, 3.88, 5.31], "line": 2.5, "over": 1.83, "under": 1.95}
+  ]
+}

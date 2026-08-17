@@ -1,0 +1,22 @@
+# secrets - NEVER commit (ANTHROPIC / API_FOOTBALL / THE_ODDS_API keys)
+.env
+*.env
+
+# live data warehouse + caches (stats.db is 265MB and mutates every run)
+data/stats.db
+data/stats.db-wal
+data/stats.db-shm
+data/*.parquet
+data/raw/
+data/history_cache/
+data/apifootball_cache/
+# keep: data/manual_anchors.json (owner Pinnacle anchors, small, versioned)
+
+# per-scan output (hundreds of CSV/JSON files, regenerable)
+reports/
+_lavish_data.json
+
+# python
+__pycache__/
+*.pyc
+.venv/
