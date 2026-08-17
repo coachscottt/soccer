@@ -1,6 +1,8 @@
 # secrets - NEVER commit (ANTHROPIC / API_FOOTBALL / THE_ODDS_API keys)
 .env
 *.env
+# stray copies: `env` / `root.env` predate the merge into .env
+/env
 
 # live data warehouse + caches (stats.db is 265MB and mutates every run)
 data/stats.db
