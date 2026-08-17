@@ -1,11 +1,12 @@
-# requirements.txt
-anthropic>=0.40.0
-pandas>=2.1.0
+# requirements.txt  (python -m pip install -r requirements.txt)
 numpy>=1.24.0
+scipy>=1.11.0            # calibration solver (least_squares) + payoff math
+pandas>=2.1.0
 scikit-learn>=1.3.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+# ---- only needed for the original article pipeline (predict_matchday.py):
+anthropic>=0.40.0
 xgboost>=2.0.0
 matplotlib>=3.8.0
 seaborn>=0.13.0
-requests>=2.31.0
-python-dotenv>=1.0.0
-schedule>=1.2.0          # pipeline automation

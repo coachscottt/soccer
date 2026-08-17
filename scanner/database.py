@@ -16,6 +16,7 @@ stay in value_spots and join to it on event_id, e.g.:
     WHERE s.won IS NOT NULL GROUP BY tight;
 """
 import sqlite3
+from pathlib import Path
 
 from statsdb.schema import DB_PATH
 
@@ -103,6 +104,12 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
 
 
 def get_conn() -> sqlite3.Connection:
+    db = Path(DB_PATH)
+    if not db.exists() or db.stat().st_size < 50_000_000:
+        raise SystemExit(
+            "stats.db missing or suspiciously small at " + str(DB_PATH)
+            + " -> copy the real warehouse (~265MB) here before running; "
+            "a fresh empty DB would silently lose the ledger + priors.")
     conn = sqlite3.connect(DB_PATH)
     ensure_schema(conn)
     return conn
