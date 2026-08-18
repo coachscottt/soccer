@@ -44,6 +44,23 @@ INDEP_LEAGUE_IDS = {"brazil": 71, "mls": 253, "ligamx": 262,
                     "laliga": 140, "championship": 40,
                     "epl": 39, "seriea": 135, "ligue1": 61}
 
+# Odds-API name -> warehouse (API-Football) name for the independent
+# engine, for the cases normalization cannot bridge. Only names the
+# resolver reports as unresolved or ambiguous belong here; everything
+# else should keep matching on its own. Keys are normalized before
+# lookup, so case/accents/punctuation in them do not matter.
+INDEP_ALIASES = {
+    "argentina": {
+        "Gimnasia La Plata": "Gimnasia L.P.",
+        "Argentinos Juniors": "Argentinos JRS",
+        # The feed spells 'Estudiantes de Rio Cuarto' out in full on the
+        # same slate, so a bare 'Estudiantes' is the La Plata club.
+        # Without this the two are an ambiguous pair and BOTH matches
+        # lose their independent fair.
+        "Estudiantes": "Estudiantes L.P.",
+    },
+}
+
 AF_BET_MAP = {"Match Winner": "h2h", "Goals Over/Under": "totals",
               "Both Teams Score": "btts", "Asian Handicap": "spread"}
 
@@ -298,8 +315,19 @@ def _build_indep(league_key, conn):
                       f"unreliable, add a distinguishing alias")
             norm_map[nk] = k
 
+        aliases = {}
+        for raw, target in INDEP_ALIASES.get(league_key, {}).items():
+            if target not in name_to_id:
+                print(f"  [WARN] alias '{raw}' -> '{target}' not found in "
+                      f"{league_key} history - alias ignored (renamed "
+                      f"upstream?)")
+                continue
+            aliases[n(raw)] = target
+
         def resolve(name):
             nn = n(name)
+            if nn in aliases:      # explicit owner mapping wins
+                return aliases[nn]
             if nn in norm_map:
                 return norm_map[nn]
             nt = set(nn.split())
