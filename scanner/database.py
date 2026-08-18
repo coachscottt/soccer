@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS value_spots (
     home TEXT, away TEXT, market TEXT, selection TEXT, line REAL,
     book TEXT, price REAL, fair_prob REAL, fair_price REAL, ev REAL,
     closing_price REAL, clv REAL, won INTEGER, pnl REAL,
+    void INTEGER DEFAULT 0,
     PRIMARY KEY (event_id, market, selection, line, book)
     ON CONFLICT REPLACE
 );"""
@@ -100,6 +101,11 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
         "PRAGMA table_info(match_fairs)").fetchall()]
     if "fit_error" not in cols:   # pre-2026-07-24 databases
         conn.execute("ALTER TABLE match_fairs ADD COLUMN fit_error REAL")
+    cols = [r[1] for r in conn.execute(
+        "PRAGMA table_info(value_spots)").fetchall()]
+    if "void" not in cols:        # pre-2026-08-18 databases
+        conn.execute("ALTER TABLE value_spots "
+                     "ADD COLUMN void INTEGER DEFAULT 0")
     conn.executescript(AUDIT_VIEW)
 
 

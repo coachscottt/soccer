@@ -23,7 +23,7 @@ def to_et(iso_utc: str) -> str:
     return dt.astimezone(ET).isoformat(timespec="minutes")[:16]
 
 LEAGUE_ORDER = ["Brazil Serie A", "Argentina Primera", "MLS", "Liga MX",
-                "Eliteserien", "Allsvenskan", "K League 1",
+                "Eliteserien", "Allsvenskan", "K League 1", "J1 League",
                 "Chinese Super League", "Danish Superliga",
                 "Czech First League", "Scottish Premiership",
                 "Austrian Bundesliga", "Primeira Liga", "Eredivisie",
@@ -70,7 +70,7 @@ def build_payload():
     keys = BET_COLS.split(", ") + ["fair_price"]
     open_rows = [dict(zip(keys, r)) for r in conn.execute(
         f"""SELECT {BET_COLS}, fair_price FROM value_spots
-            WHERE won IS NULL AND kickoff_utc > ?""", (now,))]
+            WHERE won IS NULL AND void = 0 AND kickoff_utc > ?""", (now,))]
     suggestions = [
         {"kick": to_et(b["kickoff_utc"])[5:], "ko": b["kickoff_utc"],
          "league": b["league"], "home": b["home"], "away": b["away"],

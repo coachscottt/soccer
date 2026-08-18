@@ -106,6 +106,37 @@ QUEUE = [
     ("ChinaSL 2026",         LEAGUE_IDS["ChinaSL"],      2026),
     ("CzechLiga 2026/27",    LEAGUE_IDS["CzechLiga"],    2026),
     ("DKSuperliga 2026/27",  LEAGUE_IDS["DKSuperliga"],  2026),
+    # --- current seasons (added 2026-08-18). Without these the queue
+    # topped out at 2025/26 and every European league sat at its May
+    # final matchday no matter how often sync_all ran. Season numbers
+    # verified against /leagues current=true: split-year seasons key on
+    # the START year, EXCEPT J1, whose autumn-spring switch makes the
+    # season starting 2026-08-07 season=2027 (2026 = transitional comp).
+    ("EPL 2026/27",          LEAGUE_IDS["EPL"],          2026),
+    ("LaLiga 2026/27",       LEAGUE_IDS["LaLiga"],       2026),
+    ("Bundesliga 2026/27",   LEAGUE_IDS["Bundesliga"],   2026),
+    ("SerieA 2026/27",       LEAGUE_IDS["SerieA"],       2026),
+    ("Ligue1 2026/27",       LEAGUE_IDS["Ligue1"],       2026),
+    ("Championship 2026/27", LEAGUE_IDS["Championship"], 2026),
+    ("Eredivisie 2026/27",   LEAGUE_IDS["Eredivisie"],   2026),
+    ("Primeira 2026/27",     LEAGUE_IDS["PrimeiraLiga"], 2026),
+    ("JupilerPro 2026/27",   LEAGUE_IDS["JupilerPro"],   2026),
+    ("ScotPrem 2026/27",     LEAGUE_IDS["ScotPrem"],     2026),
+    ("AustriaBL 2026/27",    LEAGUE_IDS["AustriaBL"],    2026),
+    ("SuperLig 2026/27",     LEAGUE_IDS["SuperLig"],     2026),
+    ("Ekstraklasa 2026/27",  LEAGUE_IDS["Ekstraklasa"],  2026),
+    ("GreeceSL 2026/27",     LEAGUE_IDS["GreeceSL"],     2026),
+    ("CyprusD1 2026/27",     LEAGUE_IDS["CyprusD1"],     2026),
+    ("SwissSL 2026/27",      LEAGUE_IDS["SwissSL"],      2026),
+    ("HungaryNBI 2026/27",   LEAGUE_IDS["HungaryNBI"],   2026),
+    ("RomaniaLigaI 2026/27", LEAGUE_IDS["RomaniaLigaI"], 2026),
+    ("CroatiaHNL 2026/27",   LEAGUE_IDS["CroatiaHNL"],   2026),
+    ("J1League 2026/27",     LEAGUE_IDS["J1League"],     2027),
+    ("MLS 2026",             LEAGUE_IDS["MLS"],          2026),
+    # scanner prices Argentina and the indep engine reads league 128,
+    # but it had no sync entry at all until now
+    ("Argentina 2025",       LEAGUE_IDS["ArgentinaPrimera"], 2025),
+    ("Argentina 2026",       LEAGUE_IDS["ArgentinaPrimera"], 2026),
 ]
 
 if __name__ == "__main__":

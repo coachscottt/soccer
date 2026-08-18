@@ -274,24 +274,46 @@ def _build_indep(league_key, conn):
         # xg_alpha=1.0 default (swept optimum)
         name_to_id = dict(zip(matches["HomeTeam"], matches["home_id"]))
         name_to_id.update(zip(matches["AwayTeam"], matches["away_id"]))
+        import re
         import unicodedata
 
         def n(s):
             s = unicodedata.normalize("NFKD", str(s)).encode(
                 "ascii", "ignore").decode().lower()
-            return _strip_club(s.replace("-", " ").strip())
+            # ALL punctuation -> space. 'Yokohama F. Marinos' (warehouse)
+            # and 'Yokohama F Marinos' (odds API) must normalize alike:
+            # when they did not, the exact branch missed and the fuzzy
+            # fallback matched club-suffix-stripped 'Yokohama FC' ->
+            # 'yokohama' as the ONLY candidate, so the wrong club's
+            # ratings priced the match with no warning (2026-08-18).
+            s = re.sub(r"[^a-z0-9]+", " ", s)
+            return _strip_club(" ".join(s.split()))
 
-        norm_map = {n(k): k for k in name_to_id}
+        norm_map = {}
+        for k in name_to_id:
+            nk = n(k)
+            if nk in norm_map and norm_map[nk] != k:
+                print(f"  [WARN] '{k}' and '{norm_map[nk]}' normalize "
+                      f"alike ('{nk}') - independent fairs for both are "
+                      f"unreliable, add a distinguishing alias")
+            norm_map[nk] = k
 
         def resolve(name):
             nn = n(name)
             if nn in norm_map:
                 return norm_map[nn]
-            cands = [v for k, v in norm_map.items()
+            nt = set(nn.split())
+            cands = {v for k, v in norm_map.items()
                      if nn in k or k in nn
-                     or set(nn.split()) <= set(k.split())
-                     or set(k.split()) <= set(nn.split())]
-            return cands[0] if len(set(cands)) == 1 else None
+                     or nt <= set(k.split()) or set(k.split()) <= nt}
+            if len(cands) == 1:
+                return next(iter(cands))
+            # ambiguous or unknown: skip rather than guess. Silent before
+            # this print, which is how the Yokohama mismatch survived.
+            print(f"  [WARN] no unique history match for '{name}'"
+                  + (f" (candidates: {sorted(cands)})" if cands else "")
+                  + " - independent fair skipped")
+            return None
 
         return eng, resolve, (lambda af: eng.latest_xi(name_to_id[af]))
     except Exception as e:
@@ -460,8 +482,11 @@ def scan(args, cfg):
                     # OR IGNORE: the FIRST flagged price is the CLV
                     # reference and must never be overwritten by re-scans
                     conn.execute(
-                        "INSERT OR IGNORE INTO value_spots VALUES "
-                        "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL,NULL,NULL,NULL)",
+                        "INSERT OR IGNORE INTO value_spots (logged_at, "
+                        "league, event_id, kickoff_utc, home, away, "
+                        "market, selection, line, book, price, fair_prob, "
+                        "fair_price, ev) VALUES "
+                        "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                         (now, cfg["label"], ev["id"], ev["commence_time"],
                          home, away, mk, sel, oline, book, price,
                          round(fp, 4), round(1 / fp, 3), round(ev_val, 4)))

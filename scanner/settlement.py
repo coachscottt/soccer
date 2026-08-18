@@ -53,6 +53,29 @@ def collapse_bets(rows):
     return out
 
 
+def void_events(event_ids):
+    """Mark every ungraded quote on these events void (postponed or
+    cancelled match: the bet never stood). Voids keep won/pnl NULL, so
+    they drop out of the open-bet board and out of every ledger
+    aggregate without booking a fake loss. Rescans cannot revive them -
+    value_spots inserts are OR IGNORE."""
+    conn = get_conn()
+    for eid in event_ids:
+        rows = conn.execute(
+            """SELECT league, home, away, kickoff_utc, COUNT(*)
+               FROM value_spots WHERE event_id = ? AND won IS NULL
+                 AND void = 0 GROUP BY event_id""", (eid,)).fetchone()
+        if not rows:
+            print(f"no ungraded quotes for event {eid} - nothing voided")
+            continue
+        lg, h, a, ko, n = rows
+        conn.execute("UPDATE value_spots SET void = 1 WHERE event_id = ? "
+                     "AND won IS NULL", (eid,))
+        print(f"voided {n} quotes: {lg} {h} v {a} ({ko[:10]})")
+    conn.commit()
+    conn.close()
+
+
 def settle(args, cfg):
     conn = get_conn()
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -101,7 +124,7 @@ def settle(args, cfg):
         """SELECT s.rowid, s.event_id, s.market, s.selection, s.line,
                   s.book, s.price, s.kickoff_utc, r.home_goals, r.away_goals
            FROM value_spots s JOIN match_results r USING(event_id)
-           WHERE s.won IS NULL""").fetchall()
+           WHERE s.won IS NULL AND s.void = 0""").fetchall()
     for (rid, eid, mk, sel, line, book, price, ko, hg, ag) in spots:
         if mk == "h2h":
             won = int(sel == ("home" if hg > ag else
@@ -132,12 +155,27 @@ def settle(args, cfg):
         graded += 1
     conn.commit()
 
+    stale = conn.execute(
+        """SELECT event_id, home, away, kickoff_utc, COUNT(*)
+           FROM value_spots
+           WHERE won IS NULL AND void = 0 AND league = ?
+             AND kickoff_utc < datetime('now', '-3 days')
+           GROUP BY event_id ORDER BY kickoff_utc""",
+        (cfg["label"],)).fetchall()
+
     keys = BET_COLS.split(", ")
     bets = collapse_bets([dict(zip(keys, r)) for r in conn.execute(
         f"""SELECT {BET_COLS} FROM value_spots
             WHERE won IS NOT NULL AND league = ?""", (cfg["label"],))])
     print(f"results ingested: {n_res} | spots graded this run: {graded} "
           f"(with CLV: {clvd})")
+    if stale:
+        # Past the scores feed's daysFrom window with no result: almost
+        # always a postponement. Never auto-voided - the owner calls it.
+        print(f"\nstale ungraded (no result >3 days after kickoff) - "
+              f"void with: python value_scanner.py --void <event_id>")
+        for eid, h, a, ko, n in stale:
+            print(f"  {ko[:10]}  {h} v {a}  ({n} quotes)  {eid}")
     if bets:
         from collections import defaultdict
         agg = defaultdict(lambda: [0, 0, 0.0, 0.0, []])

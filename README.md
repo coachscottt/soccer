@@ -12,7 +12,8 @@ All runs are manual. Shares the workspace `.venv`.
 | Script | Purpose |
 |---|---|
 | `value_scanner.py --league X` | THE main tool: fairs board + team xG + value flags + full odds snapshot. Leagues: brazil, argentina, mls, ligamx, norway, sweden, korea, china, denmark, czech, scotland, austria, portugal, netherlands, belgium, laliga, championship, epl, seriea, ligue1 (japan from Aug; serbia retired) |
-| `value_scanner.py --league X --settle` | After matchdays: ingest scores, grade bets (P/L, CLV incl. Asian push/half lines), two-sided totals report |
+| `value_scanner.py --league X --settle` | After matchdays: ingest scores, grade bets (P/L, CLV incl. Asian push/half lines), two-sided totals report. Lists stale ungraded events (no result >3 days after kickoff) as void candidates |
+| `value_scanner.py --void <event_id>` | Postponed/cancelled match: mark its ungraded quotes void. The bet never stood, so voids drop out of the open board and out of every ledger aggregate rather than booking a fake loss |
 | Matchday rhythm | Morning scan flags the slate; a second scan 30-60 min before the first kickoff captures the close (same-day flags grade CLV 0.0 without it); settle after the games |
 | `mls_report.py --league X` | Standalone Dixon-Coles model vs market report |
 | `predict_matchday.py [--demo]` | Original article pipeline (big-5 European leagues) |

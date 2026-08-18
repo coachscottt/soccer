@@ -10,6 +10,6 @@ Split from the original monolithic value_scanner.py (2026-07-25):
 CLI entry point stays `python value_scanner.py` (thin shim).
 """
 from .scanner import scan
-from .settlement import settle
+from .settlement import settle, void_events
 
-__all__ = ["scan", "settle"]
+__all__ = ["scan", "settle", "void_events"]

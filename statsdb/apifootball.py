@@ -33,7 +33,8 @@ LEAGUE_IDS = {"EPL": 39, "LaLiga": 140, "Bundesliga": 78,
               "HungaryNBI": 271, "Allsvenskan": 113, "RomaniaLigaI": 283,
               "AustriaBL": 218, "CroatiaHNL": 210,
               "KLeague1": 292, "J1League": 98,
-              "SerbiaSL": 286, "ChinaSL": 169}
+              "SerbiaSL": 286, "ChinaSL": 169,
+              "ArgentinaPrimera": 128}
 
 
 class ApiFootballClient:
