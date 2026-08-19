@@ -58,7 +58,75 @@ INDEP_ALIASES = {
         # Without this the two are an ambiguous pair and BOTH matches
         # lose their independent fair.
         "Estudiantes": "Estudiantes L.P.",
+        # Without this 'Independiente Rivadavia' is a token superset of
+        # the lone candidate 'Independiente' and resolves to it SILENTLY
+        # - the Rivadavia side was being priced with Independiente's
+        # ratings, which is worse than a skip (2026-08-19).
+        "Independiente Rivadavia": "Independ. Rivadavia",
     },
+    "brazil": {
+        "Atletico Mineiro": "Atletico-MG",
+        "Bragantino-SP": "RB Bragantino",
+    },
+    "mls": {
+        "D.C. United": "DC United",
+        "LA Galaxy": "Los Angeles Galaxy",
+    },
+    "norway": {
+        # 'o with stroke' drops to nothing under the ascii fold, so
+        # 'Bodo/Glimt' from the feed normalizes to 'bod glimt'.
+        "Bodø/Glimt": "Bodo/Glimt",
+        "HamKam": "Ham-Kam",
+    },
+    "korea": {
+        # The military side moved from Sangju to Gimcheon in 2021; the
+        # odds feed still carries the old city.
+        "Sangju Sangmu FC": "Gimcheon Sangmu FC",
+    },
+    # The CSL clubs renamed when the sponsor-name ban took effect, and
+    # the warehouse still carries the pre-rename names (same
+    # API-Football team ids). Each pair below is one club: the feed's 9
+    # unresolved names and the warehouse's 9 unmatched 2026 names line
+    # up one-to-one, which is what pins the mapping.
+    "china": {
+        "Chengdu Rongcheng FC": "Chengdu Better City",
+        "Chongqing Tonglianglong FC": "Chongqing Tongliang Long",
+        "Dalian Yingbo": "Dalian Zhixing",
+        "Liaoning Tieren FC": "Shenyang Urban",
+        "Qingdao Hainiu FC": "Qingdao Jonoon",
+        "Qingdao West Coast FC": "Qingdao Youth Island",
+        # Sichuan Jiuniu relocated to Shenzhen in 2023.
+        "Shenzhen Peng City FC": "Sichuan Jiuniu",
+        "Tianjin Jinmen Tiger FC": "Tianjin Teda",
+        "Zhejiang": "Hangzhou Greentown",
+    },
+    "scotland": {
+        "Hearts": "Heart Of Midlothian",
+        # 'Dundee United' matched 'Dundee' as its only candidate while
+        # 'Dundee Utd' sat right there unmatched - same silent-wrong-club
+        # failure as Independiente Rivadavia (2026-08-19).
+        "Dundee United": "Dundee Utd",
+    },
+    "austria": {
+        "Rheindorf Altach": "SCR Altach",
+    },
+    "portugal": {
+        "Sporting Lisbon": "Sporting CP",
+    },
+    "laliga": {
+        "Athletic Bilbao": "Athletic Club",
+        # 'Malaga' is deliberately absent: it is a Segunda club that the
+        # feed carries on this key, with no league-140 history to rate.
+    },
+    "championship": {
+        "Queens Park Rangers": "QPR",
+        "Sheffield United": "Sheffield Utd",
+        "Wolverhampton Wanderers": "Wolves",
+    },
+    # Not aliased on purpose: promoted sides with no top-flight history
+    # for their league id - epl 'Coventry City'/'Hull City', ligue1
+    # 'Le Mans FC'/'Troyes'. The engine cannot rate them at all, so the
+    # skip warning is the correct outcome, not a naming gap.
 }
 
 AF_BET_MAP = {"Match Winner": "h2h", "Goals Over/Under": "totals",
